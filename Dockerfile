@@ -2,9 +2,15 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
+# Copy requirements first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy model files first
+COPY breast_cancer_model2.pkl .
+COPY breast_cancer_scaler2.pkl .
+
+# Copy the rest of the application
 COPY . .
 
 EXPOSE 8000
