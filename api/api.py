@@ -6,44 +6,51 @@ from typing import Dict
 from sklearn.preprocessing import StandardScaler
 import joblib
 import os
+import logging
+import sys
 
-app = FastAPI()
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="Breast Cancer Prediction API")
 
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Local development
-        "https://breast-cancer-ui.onrender.com"  # Deployed frontend
-    ],
+    allow_origins=["*"],  # Allow all origins in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Get the absolute path to the model files
-current_dir = os.path.dirname(os.path.abspath(__file__))
+current_dir = os.getcwd()
 model_path = os.path.join(current_dir, 'breast_cancer_model2.pkl')
 scaler_path = os.path.join(current_dir, 'breast_cancer_scaler2.pkl')
 
 # Load the model and scaler
 try:
-    print("Current working directory:", os.getcwd())
-    print("Current directory contents:", os.listdir('.'))
-    print("Attempting to load model from:", model_path)
+    logger.info(f"Current working directory: {os.getcwd()}")
+    logger.info(f"Current directory contents: {os.listdir('.')}")
+    logger.info(f"Attempting to load model from: {model_path}")
     model = joblib.load(model_path)
-    print("Model loaded successfully!")
+    logger.info("Model loaded successfully!")
     
-    print("Attempting to load scaler from:", scaler_path)
+    logger.info(f"Attempting to load scaler from: {scaler_path}")
     scaler = joblib.load(scaler_path)
-    print("Scaler loaded successfully!")
+    logger.info("Scaler loaded successfully!")
 except FileNotFoundError as e:
-    print(f"Error: File not found - {str(e)}")
+    logger.error(f"Error: File not found - {str(e)}")
     model = None
     scaler = None
 except Exception as e:
-    print(f"Error loading model or scaler: {str(e)}")
-    print(f"Error type: {type(e)}")
+    logger.error(f"Error loading model or scaler: {str(e)}")
+    logger.error(f"Error type: {type(e)}")
     model = None
     scaler = None
 
@@ -55,7 +62,7 @@ class PredictionInput(BaseModel):
     smoothness_mean: float
     compactness_mean: float
     concavity_mean: float
-    concave_points_mean: float  # Note: This matches the API input
+    concave_points_mean: float
     symmetry_mean: float
     fractal_dimension_mean: float
     radius_se: float
@@ -81,12 +88,19 @@ class PredictionInput(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"message": "Breast Cancer Prediction API is running"}
+    return {
+        "status": "healthy",
+        "message": "Breast Cancer Prediction API is running",
+        "model_loaded": model is not None,
+        "scaler_loaded": scaler is not None
+    }
 
 @app.post("/predict")
 def predict(input_data: PredictionInput):
     if model is None or scaler is None:
-        raise HTTPException(status_code=500, detail="Model or scaler not loaded. Please check the server logs.")
+        error_msg = "Model or scaler not loaded. Please check the server logs."
+        logger.error(error_msg)
+        raise HTTPException(status_code=500, detail=error_msg)
     
     try:
         # Convert input data to numpy array
@@ -103,28 +117,27 @@ def predict(input_data: PredictionInput):
             input_data.concave_points_worst, input_data.symmetry_worst, input_data.fractal_dimension_worst
         ]])
         
-        print("Input features shape:", features.shape)
-        print("Input features:", features)
+        logger.info(f"Input features shape: {features.shape}")
         
         # Scale the features
         features_scaled = scaler.transform(features)
-        print("Scaled features:", features_scaled)
         
         # Make prediction
         prediction = model.predict(features_scaled)[0]
-        print("Raw prediction:", prediction)
+        logger.info(f"Raw prediction: {prediction}")
         
         # Convert prediction to string
         result = "Malignant" if prediction == 1 else "Benign"
-        print("Final prediction:", result)
+        logger.info(f"Final prediction: {result}")
         
         return {"prediction": result}
     
     except Exception as e:
-        print(f"Error during prediction: {str(e)}")
-        print(f"Error type: {type(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = f"Error during prediction: {str(e)}"
+        logger.error(error_msg)
+        logger.error(f"Error type: {type(e)}")
+        raise HTTPException(status_code=500, detail=error_msg)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info") 

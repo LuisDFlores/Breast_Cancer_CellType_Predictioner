@@ -5,10 +5,12 @@ services:
     env: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    healthCheckPath: /
+    healthCheckPath: /predict
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
+      - key: PYTHONUNBUFFERED
+        value: "1"
 
   # Frontend Service
   - type: web
