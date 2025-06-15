@@ -2,12 +2,12 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Copy API files
+COPY api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all files
-COPY . .
+# Copy API code and model files
+COPY api/ .
 
 EXPOSE 8000
 
