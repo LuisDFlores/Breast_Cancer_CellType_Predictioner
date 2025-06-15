@@ -3,7 +3,7 @@ services:
   - type: web
     name: breast-cancer-api
     env: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./api/Dockerfile
     dockerContext: ./api
     healthCheckPath: /predict
     envVars:
