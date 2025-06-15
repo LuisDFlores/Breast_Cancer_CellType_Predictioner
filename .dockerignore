@@ -36,4 +36,8 @@ var/
 
 # Keep model files
 !breast_cancer_model2.pkl
-!breast_cancer_scaler2.pkl 
+!breast_cancer_scaler2.pkl
+
+# Keep API files
+!api.py
+!requirements.txt 

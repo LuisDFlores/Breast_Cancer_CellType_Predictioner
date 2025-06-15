@@ -6,11 +6,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy model files first
-COPY breast_cancer_model2.pkl .
-COPY breast_cancer_scaler2.pkl .
-
-# Copy the rest of the application
+# Copy all files
 COPY . .
 
 EXPOSE 8000
