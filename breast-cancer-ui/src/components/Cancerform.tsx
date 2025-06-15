@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:8000/predict';
+const API_URL = 'https://breast-cancer-api-74zl.onrender.com/predict';
 
 const Cancerform = () => {
   const [inputValues, setInputValues] = useState({
