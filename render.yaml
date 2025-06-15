@@ -4,7 +4,7 @@ services:
     name: breast-cancer-api
     env: docker
     dockerfilePath: ./Dockerfile
-    dockerContext: .
+    dockerContext: ./api
     healthCheckPath: /predict
     envVars:
       - key: PYTHON_VERSION

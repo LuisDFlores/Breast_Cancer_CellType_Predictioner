@@ -12,7 +12,7 @@ import json
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,  # Changed to DEBUG for more detailed logs
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     stream=sys.stdout
 )
@@ -34,15 +34,22 @@ current_dir = os.getcwd()
 model_path = os.path.join(current_dir, 'breast_cancer_model2.pkl')
 scaler_path = os.path.join(current_dir, 'breast_cancer_scaler2.pkl')
 
+logger.info(f"Current working directory: {current_dir}")
+logger.info(f"Current directory contents: {os.listdir(current_dir)}")
+logger.info(f"Model path: {model_path}")
+logger.info(f"Scaler path: {scaler_path}")
+
 # Load the model and scaler
 try:
-    logger.info(f"Current working directory: {os.getcwd()}")
-    logger.info(f"Current directory contents: {os.listdir('.')}")
     logger.info(f"Attempting to load model from: {model_path}")
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found at {model_path}")
     model = joblib.load(model_path)
     logger.info("Model loaded successfully!")
     
     logger.info(f"Attempting to load scaler from: {scaler_path}")
+    if not os.path.exists(scaler_path):
+        raise FileNotFoundError(f"Scaler file not found at {scaler_path}")
     scaler = joblib.load(scaler_path)
     logger.info("Scaler loaded successfully!")
 except FileNotFoundError as e:
@@ -107,6 +114,10 @@ async def predict(request: Request):
         data = await request.json()
         logger.info(f"Parsed request data: {data}")
         
+        # Validate input data
+        if not all(isinstance(data.get(key), (int, float)) for key in PredictionInput.__annotations__):
+            raise ValueError("All input values must be numbers")
+        
         # Convert to PredictionInput
         input_data = PredictionInput(**data)
         
@@ -133,6 +144,7 @@ async def predict(request: Request):
         
         # Scale the features
         features_scaled = scaler.transform(features)
+        logger.info("Features scaled successfully")
         
         # Make prediction
         prediction = model.predict(features_scaled)[0]
@@ -156,6 +168,7 @@ async def predict(request: Request):
         error_msg = f"Error during prediction: {str(e)}"
         logger.error(error_msg)
         logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error details: {str(e)}")
         raise HTTPException(status_code=500, detail=error_msg)
 
 if __name__ == "__main__":
