@@ -1,0 +1,22 @@
+services:
+  # Backend API Service
+  - type: web
+    name: breast-cancer-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /docs
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+
+  # Frontend Service
+  - type: web
+    name: breast-cancer-ui
+    env: node
+    buildCommand: cd breast-cancer-ui && npm install && npm run build
+    startCommand: cd breast-cancer-ui && npm start
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://breast-cancer-api.onrender.com 
