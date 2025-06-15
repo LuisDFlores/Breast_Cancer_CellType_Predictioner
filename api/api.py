@@ -5,6 +5,7 @@ import numpy as np
 from typing import Dict
 from sklearn.preprocessing import StandardScaler
 import joblib
+import os
 
 app = FastAPI()
 
@@ -20,14 +21,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Get the absolute path to the model files
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, 'breast_cancer_model2.pkl')
+scaler_path = os.path.join(current_dir, 'breast_cancer_scaler2.pkl')
+
 # Load the model and scaler
 try:
-    print("Attempting to load model from:", 'breast_cancer_model2.pkl')
-    model = joblib.load('breast_cancer_model2.pkl')
+    print("Current working directory:", os.getcwd())
+    print("Current directory contents:", os.listdir('.'))
+    print("Attempting to load model from:", model_path)
+    model = joblib.load(model_path)
     print("Model loaded successfully!")
     
-    print("Attempting to load scaler from:", 'breast_cancer_scaler2.pkl')
-    scaler = joblib.load('breast_cancer_scaler2.pkl')
+    print("Attempting to load scaler from:", scaler_path)
+    scaler = joblib.load(scaler_path)
     print("Scaler loaded successfully!")
 except FileNotFoundError as e:
     print(f"Error: File not found - {str(e)}")
