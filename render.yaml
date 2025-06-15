@@ -20,4 +20,6 @@ services:
     staticPublishPath: breast-cancer-ui/out
     envVars:
       - key: NODE_VERSION
-        value: 18.17.0 
+        value: 18.17.0
+      - key: NEXT_PUBLIC_API_URL
+        value: https://breast-cancer-api-74zl.onrender.com/predict 
