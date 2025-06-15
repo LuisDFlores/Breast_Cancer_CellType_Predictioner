@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
@@ -8,6 +8,7 @@ import joblib
 import os
 import logging
 import sys
+import json
 
 # Configure logging
 logging.basicConfig(
@@ -96,13 +97,24 @@ def read_root():
     }
 
 @app.post("/predict")
-def predict(input_data: PredictionInput):
-    if model is None or scaler is None:
-        error_msg = "Model or scaler not loaded. Please check the server logs."
-        logger.error(error_msg)
-        raise HTTPException(status_code=500, detail=error_msg)
-    
+async def predict(request: Request):
     try:
+        # Log the raw request body
+        body = await request.body()
+        logger.info(f"Raw request body: {body.decode()}")
+        
+        # Parse the request body
+        data = await request.json()
+        logger.info(f"Parsed request data: {data}")
+        
+        # Convert to PredictionInput
+        input_data = PredictionInput(**data)
+        
+        if model is None or scaler is None:
+            error_msg = "Model or scaler not loaded. Please check the server logs."
+            logger.error(error_msg)
+            raise HTTPException(status_code=500, detail=error_msg)
+        
         # Convert input data to numpy array
         features = np.array([[
             input_data.radius_mean, input_data.texture_mean, input_data.perimeter_mean,
@@ -132,6 +144,14 @@ def predict(input_data: PredictionInput):
         
         return {"prediction": result}
     
+    except json.JSONDecodeError as e:
+        error_msg = f"Invalid JSON in request body: {str(e)}"
+        logger.error(error_msg)
+        raise HTTPException(status_code=400, detail=error_msg)
+    except ValueError as e:
+        error_msg = f"Invalid input data: {str(e)}"
+        logger.error(error_msg)
+        raise HTTPException(status_code=400, detail=error_msg)
     except Exception as e:
         error_msg = f"Error during prediction: {str(e)}"
         logger.error(error_msg)

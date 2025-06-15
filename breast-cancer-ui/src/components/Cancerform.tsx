@@ -65,16 +65,22 @@ const Cancerform = () => {
       );
 
       console.log('Sending data to API:', numericValues);
-      const response = await axios.post(API_URL, numericValues);
+      const response = await axios.post(API_URL, numericValues, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
       console.log('API Response:', response.data);
       
       setPrediction(response.data.prediction);
     } catch (err) {
       console.error('Error:', err);
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.detail || 'Error connecting to the API');
+        const errorMessage = err.response?.data?.detail || 'Error connecting to the API';
+        setError(`API Error: ${errorMessage}`);
       } else {
-        setError('An unexpected error occurred');
+        setError('An unexpected error occurred. Please try again later.');
       }
     } finally {
       setLoading(false);
