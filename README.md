@@ -1,14 +1,30 @@
-# Breast Cancer Prediction Tool
+## Breast Cancer Prediction Tool
 
-A full-stack application for predicting breast cancer using machine learning.
+A full-stack web application for predicting breast cancer cell types using machine learning.
 
-## Features
+### 🚀 Features
+- **Frontend:** Next.js (React, TypeScript, Tailwind CSS)
+- **Backend:** FastAPI (Python)
+- **Machine Learning:** Pre-trained model for breast cancer prediction
+- **Containerized:** Docker & Docker Compose for easy local development
+- **Cloud-Ready:** AWS deployment via CDK (ECS Fargate, ALB, ECR)
+- **CI/CD:** Simple, production-ready workflow
 
-- Machine learning model for breast cancer prediction
-- FastAPI backend
-- Next.js frontend with modern UI
-- Docker containerization
-- AWS deployment ready
+### 🛠️ How It Works
+- Users enter cell data in a modern, responsive web form.
+- The frontend sends data to a FastAPI backend.
+- The backend preprocesses input, runs the ML model, and returns predictions instantly.
+
+### 🌎 Deployment
+- **Local:** Run with Docker Compose (`docker-compose up --build`)
+- **Cloud:** Deploy to AWS with CDK (`cdk deploy`)
+
+### 👤 My Role
+I designed and implemented the entire stack, including:
+- Building the ML model and API
+- Creating the Next.js frontend
+- Dockerizing both services
+- Automating AWS deployment with CDK
 
 ## Tech Stack
 
@@ -51,16 +67,3 @@ A full-stack application for predicting breast cancer using machine learning.
 ### Frontend
 - `NEXT_PUBLIC_API_URL`: URL of the backend API
 
-## Deployment
-
-The application is configured for AWS deployment using:
-- AWS ECS (Elastic Container Service)
-- AWS ECR (Elastic Container Registry)
-- AWS CodeBuild
-- AWS CodePipeline
-
-See `aws-deploy.yml` for deployment configuration.
-
-## License
-
-MIT 
