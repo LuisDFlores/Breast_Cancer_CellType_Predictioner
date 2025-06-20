@@ -1,53 +1,65 @@
 # Breast Cancer Prediction Tool
 
-A machine learning-based web application for predicting breast cancer using the Wisconsin Breast Cancer dataset.
+A full-stack application for predicting breast cancer using machine learning.
 
 ## Features
 
 - Machine learning model for breast cancer prediction
-- FastAPI backend with automatic API documentation
-- Modern Next.js frontend with Tailwind CSS
+- FastAPI backend
+- Next.js frontend with modern UI
 - Docker containerization
-- Deployed on Render
+- AWS deployment ready
 
 ## Tech Stack
 
 - Backend:
-  - Python 3.9
   - FastAPI
-  - Scikit-learn
+  - Python 3.9
+  - scikit-learn
   - Docker
 
 - Frontend:
   - Next.js
-  - Tailwind CSS
   - TypeScript
+  - Tailwind CSS
+  - Docker
 
-## Getting Started
+## Local Development
 
 1. Clone the repository
-2. Install backend dependencies:
+2. Install dependencies:
    ```bash
+   # Backend
+   cd api
    pip install -r requirements.txt
-   ```
-3. Install frontend dependencies:
-   ```bash
-   cd breast-cancer-ui
+
+   # Frontend
+   cd ../breast-cancer-ui
    npm install
    ```
-4. Run the backend:
+
+3. Run with Docker Compose:
    ```bash
-   uvicorn api:app --reload
-   ```
-5. Run the frontend:
-   ```bash
-   cd breast-cancer-ui
-   npm run dev
+   docker-compose up
    ```
 
-## API Documentation
+## Environment Variables
 
-Once the backend is running, visit `/docs` for interactive API documentation.
+### Backend
+- `ENVIRONMENT`: Set to 'production' or 'development'
+
+### Frontend
+- `NEXT_PUBLIC_API_URL`: URL of the backend API
+
+## Deployment
+
+The application is configured for AWS deployment using:
+- AWS ECS (Elastic Container Service)
+- AWS ECR (Elastic Container Registry)
+- AWS CodeBuild
+- AWS CodePipeline
+
+See `aws-deploy.yml` for deployment configuration.
 
 ## License
 

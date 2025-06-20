@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://breast-cancer-api-74zl.onrender.com/predict';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_TIMEOUT = 30000; // 30 seconds timeout
 
 const Cancerform = () => {
   const [inputValues, setInputValues] = useState({
@@ -42,9 +43,37 @@ const Cancerform = () => {
   const [prediction, setPrediction] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiHealth, setApiHealth] = useState<boolean>(true);
+
+  // Health check when component mounts
+  useEffect(() => {
+    const checkApiHealth = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/`);
+        console.log('API Health Check Response:', response.data);
+        setApiHealth(true);
+      } catch (err) {
+        console.error('API Health Check Error:', err);
+        setApiHealth(false);
+        setError('API is currently unavailable. Please try again later.');
+      }
+    };
+    checkApiHealth();
+  }, []);
+
+  const validateInput = (name: string, value: string) => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return false;
+    if (num < 0) return false;
+    return true;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if (!validateInput(name, value)) {
+      setError(`Invalid value for ${formatLabel(name)}`);
+      return;
+    }
     setInputValues(prev => ({
       ...prev,
       [name]: value
@@ -64,12 +93,20 @@ const Cancerform = () => {
         Object.entries(inputValues).map(([key, value]) => [key, parseFloat(value)])
       );
 
+      // Validate all values are numbers
+      if (Object.values(numericValues).some(value => isNaN(value))) {
+        setError('Please fill in all fields with valid numbers');
+        setLoading(false);
+        return;
+      }
+
       console.log('Sending data to API:', numericValues);
-      const response = await axios.post(API_URL, numericValues, {
+      const response = await axios.post(`${API_URL}/predict`, numericValues, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        }
+        },
+        timeout: API_TIMEOUT
       });
       console.log('API Response:', response.data);
       
@@ -77,8 +114,12 @@ const Cancerform = () => {
     } catch (err) {
       console.error('Error:', err);
       if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data?.detail || 'Error connecting to the API';
-        setError(`API Error: ${errorMessage}`);
+        if (err.code === 'ECONNABORTED') {
+          setError('Request timed out. Please try again.');
+        } else {
+          const errorMessage = err.response?.data?.detail || 'Error connecting to the API';
+          setError(`API Error: ${errorMessage}`);
+        }
       } else {
         setError('An unexpected error occurred. Please try again later.');
       }
@@ -105,6 +146,13 @@ const Cancerform = () => {
 
         {/* Main Content */}
         <div className="px-8 py-6">
+          {/* API Status */}
+          {!apiHealth && (
+            <div className="mb-8 p-4 bg-red-50 rounded-lg border border-red-200">
+              <div className="text-red-600">⚠️ API is currently unavailable. Please try again later.</div>
+            </div>
+          )}
+
           {/* Disclaimer Section */}
           <div className="mb-8 bg-gradient-to-r from-white via-yellow-50 to-white rounded-lg p-6 border border-yellow-200">
             <h3 className="text-xl font-semibold text-yellow-800 mb-3">⚠️ Medical Disclaimer</h3>
@@ -148,7 +196,7 @@ const Cancerform = () => {
               <div className="mt-8">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !apiHealth}
                   className="w-full flex justify-center py-4 px-6 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gradient-to-r from-white via-[#20BEFF] to-white hover:from-white hover:via-[#20BEFF]/90 hover:to-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#20BEFF] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {loading ? (
