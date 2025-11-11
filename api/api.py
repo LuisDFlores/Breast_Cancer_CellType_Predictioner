@@ -30,7 +30,8 @@ app.add_middleware(
 )
 
 # Get the absolute path to the model files
-current_dir = os.getcwd()
+# Use __file__ to get the directory where api.py is located (works in Vercel serverless)
+current_dir = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(current_dir, 'breast_cancer_model2.pkl')
 scaler_path = os.path.join(current_dir, 'breast_cancer_scaler2.pkl')
 
@@ -173,4 +174,6 @@ async def predict(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info") 
+    import os
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info") 

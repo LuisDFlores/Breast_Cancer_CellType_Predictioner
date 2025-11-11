@@ -17,7 +17,8 @@ A full-stack web application for predicting breast cancer cell types using machi
 
 ### 🌎 Deployment
 - **Local:** Run with Docker Compose (`docker-compose up --build`)
-- **Cloud:** Deploy to AWS with CDK (`cdk deploy`)
+- **Free Hosting:** Deploy to Vercel (see [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md))
+- **Cloud:** Deploy to AWS with CDK (`cdk deploy`) - *Note: AWS deployment incurs costs*
 
 ### 👤 My Role
 I designed and implemented the entire stack, including:
@@ -65,5 +66,15 @@ I designed and implemented the entire stack, including:
 - `ENVIRONMENT`: Set to 'production' or 'development'
 
 ### Frontend
-- `NEXT_PUBLIC_API_URL`: URL of the backend API
+- `NEXT_PUBLIC_API_URL`: URL of the backend API (not needed for Vercel - uses relative path `/api`)
+
+## 🆓 Free Hosting on Vercel
+
+This project is configured for **FREE** deployment on Vercel:
+- ✅ Frontend (Next.js) - Free tier
+- ✅ Backend (FastAPI) - Serverless functions, Free tier
+- ✅ Automatic HTTPS
+- ✅ Custom domain support
+
+See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed deployment instructions.
 

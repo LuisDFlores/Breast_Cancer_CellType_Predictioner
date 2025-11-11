@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "breast-cancer-ui/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "api/vercel_handler.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/vercel_handler.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "breast-cancer-ui/$1"
+    }
+  ],
+  "functions": {
+    "api/vercel_handler.py": {
+      "maxDuration": 30,
+      "memory": 3008
+    }
+  }
+}
+
