@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Use relative path for Vercel deployment, fallback to localhost for development
-const API_URL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? '/api' : 'http://localhost:8000');
+// Use Render backend URL from environment variable, fallback to localhost for development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const API_TIMEOUT = 30000; // 30 seconds timeout
 
 const Cancerform = () => {
