@@ -17,7 +17,7 @@ A full-stack web application for predicting breast cancer cell types using machi
 
 ### 🌎 Deployment
 - **Local:** Run with Docker Compose (`docker-compose up --build`)
-- **Free Hosting:** Deploy to Vercel (see [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md))
+- **Free Hosting:** Split hosting on Vercel (Frontend) + Render (Backend) - **100% FREE** (see [SPLIT_HOSTING_GUIDE.md](./SPLIT_HOSTING_GUIDE.md))
 - **Cloud:** Deploy to AWS with CDK (`cdk deploy`) - *Note: AWS deployment incurs costs*
 
 ### 👤 My Role
@@ -66,15 +66,16 @@ I designed and implemented the entire stack, including:
 - `ENVIRONMENT`: Set to 'production' or 'development'
 
 ### Frontend
-- `NEXT_PUBLIC_API_URL`: URL of the backend API (not needed for Vercel - uses relative path `/api`)
+- `NEXT_PUBLIC_API_URL`: URL of the backend API (set to Render backend URL for production)
 
-## 🆓 Free Hosting on Vercel
+## 🆓 Free Hosting (Split Hosting)
 
-This project is configured for **FREE** deployment on Vercel:
-- ✅ Frontend (Next.js) - Free tier
-- ✅ Backend (FastAPI) - Serverless functions, Free tier
+This project is configured for **100% FREE** deployment using split hosting:
+- ✅ **Frontend (Next.js)** on Vercel - Free tier, unlimited deployments
+- ✅ **Backend (FastAPI)** on Render - Free tier, Docker support
+- ✅ No size limits (unlike Vercel's 250MB limit)
 - ✅ Automatic HTTPS
-- ✅ Custom domain support
+- ✅ Auto-deploy on git push
 
-See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed deployment instructions.
+See [SPLIT_HOSTING_GUIDE.md](./SPLIT_HOSTING_GUIDE.md) for detailed deployment instructions.
 
