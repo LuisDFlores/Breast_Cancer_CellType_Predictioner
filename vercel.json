@@ -1,27 +1,18 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "cd breast-cancer-ui && npm run build",
+  "outputDirectory": "breast-cancer-ui/.next",
+  "installCommand": "cd breast-cancer-ui && npm install",
+  "framework": "nextjs",
+  "rewrites": [
     {
-      "src": "breast-cancer-ui/package.json",
-      "use": "@vercel/next"
-    },
-    {
-      "src": "api/vercel_handler.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/vercel_handler.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "breast-cancer-ui/$1"
+      "source": "/api/(.*)",
+      "destination": "/api/vercel_handler.py"
     }
   ],
   "functions": {
     "api/vercel_handler.py": {
+      "runtime": "python3.9",
       "maxDuration": 30,
       "memory": 3008
     }
