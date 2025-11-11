@@ -1,9 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "cd breast-cancer-ui && npm run build",
-  "outputDirectory": "breast-cancer-ui/.next",
-  "installCommand": "cd breast-cancer-ui && npm install",
-  "framework": "nextjs",
   "rewrites": [
     {
       "source": "/api/(.*)",
