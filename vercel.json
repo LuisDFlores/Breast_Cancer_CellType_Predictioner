@@ -8,8 +8,7 @@
   ],
   "functions": {
     "api/vercel_handler.py": {
-      "maxDuration": 10,
-      "memory": 2048
+      "maxDuration": 10
     }
   }
 }
